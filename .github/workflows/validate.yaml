@@ -44,7 +44,6 @@ jobs:
         run: |
           curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${{ env.TG_VERSION }}/terragrunt_linux_amd64
           chmod +x terragrunt
-          cat /bin/terragrunt
           sudo mv terragrunt /bin
       
       - name: Verify Terragrunt version
