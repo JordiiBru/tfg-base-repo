@@ -13,7 +13,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
-  Set up:
+  Set-up:
     name: Setting up environment
     runs-on: ubuntu-latest
     defaults:
