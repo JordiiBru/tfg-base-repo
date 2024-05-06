@@ -47,6 +47,9 @@ jobs:
         with:
           terraform_version: $TF_VERSION
 
+      - name: Verify Terraform version
+        run: terraform --version
+
       - name: Setup Terragrunt
         run: |
           curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${{ env.TG_VERSION }}/terragrunt_linux_amd64
@@ -55,12 +58,6 @@ jobs:
       
       - name: Verify Terragrunt version
         run: terragrunt --version
-
-      - name: Verify Terraform version
-        run: terraform --version
-      
-      - name: Verify awscli version
-        run: aws --version
 
       - name: Terragrunt Format
         id: fmt
@@ -72,3 +69,11 @@ jobs:
         id: validate
         run: terragrunt validate --terragrunt-working-dir ${{ env.WORKING_DIR }} 
         continue-on-error: true
+
+      - name: PR Post Validate
+        if: always() && github.ref != 'refs/heads/master' && (steps.validate.outcome == 'success' || steps.validate.outcome == 'failure')
+        uses: robburger/terraform-pr-commenter@v1
+        with:
+          commenter_type: validate
+          commenter_input: ${{ format('{0}{1}', steps.validate.outputs.stdout, steps.validate.outputs.stderr) }}
+          commenter_exitcode: ${{ steps.validate.outputs.exitcode }}
