@@ -65,7 +65,7 @@ jobs:
       - name: Terragrunt Format
         id: fmt
         run: |
-          (cd $WORKING_DIR && terraform fmt -check -recursive -diff)
+          terragrunt fmt -check -recursive --terragrunt-working-dir ${{ env.WORKING_DIR }} -diff
         continue-on-error: false
       # - name: Check terragrunt HCL
       #   uses: gruntwork-io/terragrunt-action@v2
