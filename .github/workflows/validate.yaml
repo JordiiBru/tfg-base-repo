@@ -69,9 +69,9 @@ jobs:
 
       - name: Terragrunt Validate
         id: validate
-        run: terragrunt validate --terragrunt-working-dir ${{ env.WORKING_DIR }} 
-        # run: |
-        #   (cd $WORKING_DIR && terraform validate)
+        # run: terragrunt validate --terragrunt-working-dir ${{ env.WORKING_DIR }} 
+        run: |
+          (cd $WORKING_DIR && terraform validate)
         continue-on-error: true
 
       - name: Post Validate Comment
