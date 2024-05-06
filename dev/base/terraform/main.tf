@@ -73,7 +73,7 @@ resource "aws_s3_bucket_versioning" "tfg_states_versioning" {
 }
 
 resource "aws_dynamodb_table" "tfg_tf_locks" {
-  name                        = "tfg-terraform-locks"
+   name                        = "tfg-terraform-locks"
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "LockID"
   deletion_protection_enabled = true
