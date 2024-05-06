@@ -67,17 +67,27 @@ jobs:
           terragrunt fmt -check -recursive --terragrunt-working-dir ${{ env.WORKING_DIR }} -diff
         continue-on-error: false
 
-      - name: Terragrunt Validate
-        id: validate
-        # run: terragrunt validate --terragrunt-working-dir ${{ env.WORKING_DIR }} 
-        run: |
-          (cd $WORKING_DIR && terraform validate)
-        continue-on-error: true
+      # - name: Terragrunt Validate
+      #   id: validate
+      #   # run: terragrunt validate --terragrunt-working-dir ${{ env.WORKING_DIR }} 
+      #   run: |
+      #     (cd $WORKING_DIR && terraform validate)
+      #   continue-on-error: true
 
-      - name: Post Validate Comment
-        if: ${{ always() && (steps.validate.outcome == 'success' || steps.validate.outcome == 'failure') }}
-        uses: GetTerminus/terraform-pr-commenter@v3.0.4
+      # - name: Post Validate Comment
+      #   if: ${{ always() && (steps.validate.outcome == 'success' || steps.validate.outcome == 'failure') }}
+      #   uses: GetTerminus/terraform-pr-commenter@v3.0.4
+      #   with:
+      #     commenter_type: validate
+      #     commenter_input: ${{ format('{0}{1}', steps.validate.outputs.stdout, steps.validate.outputs.stderr) }}
+      #     commenter_exitcode: ${{ steps.validate.outputs.exitcode }}
+      - name: 'Terragrunt Validate'
+        uses: the-commons-project/terragrunt-github-actions@master
         with:
-          commenter_type: validate
-          commenter_input: ${{ format('{0}{1}', steps.validate.outputs.stdout, steps.validate.outputs.stderr) }}
-          commenter_exitcode: ${{ steps.validate.outputs.exitcode }}
+          tf_actions_version: ${{ env.TF_VERSION }}
+          tg_actions_version: ${{ env.TG_VERSION}}
+          tf_actions_subcommand: 'validate'
+          tf_actions_working_dir: ${{ env.tf_working_dir }}
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
