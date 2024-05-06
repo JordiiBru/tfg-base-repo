@@ -5,7 +5,10 @@ remote_state {
     if_exists = "overwrite_terragrunt"
   }
   config = {
-    bucket = "tfg-terraform-states"
+    bucket                   = "tfg-terraform-states"
+    skip_bucket_root_access  = true
+    skip_bucket_enforced_tls = true
+    disable_bucket_update    = true
 
     key = "${path_relative_to_include()}/terraform.tfstate"
     region         = "eu-west-1"
@@ -38,22 +41,22 @@ generate "provider" {
 # Any changes here will be lost.
 
 terraform {
-    required_providers {
-        aws = {
-        source  = "hashicorp/aws"
-        version = "~> 5.0"
-        }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
     }
+  }
 }
 
 provider "aws" {
-    region = "eu-west-1"
-    profile = "aws-jordi-account"
+  region  = "eu-west-1"
+  profile = "aws-jordi-account"
 }
 
 provider "aws" {
-    alias  = "north-virginia"
-    region = "us-east-1"
+  alias  = "north-virginia"
+  region = "us-east-1"
 }
 
 EOF
