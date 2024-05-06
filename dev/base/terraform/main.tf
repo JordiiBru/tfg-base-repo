@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "states_bucket_policy" {
   statement {
     effect = "Allow"
     principals {
-      type        = "AWS"
+      type = "AWS"
       identifiers = [
         "arn:aws:iam::${var.account_ids["aws-jordi-account"]}:root",
         "arn:aws:iam::${var.account_ids["aws-jordi-account"]}:role/tfg-repo-base-cicd"
