@@ -1,6 +1,5 @@
 name: 'Validate'
 on:
-  push:
   pull_request:
     types: [opened, reopened, synchronize]
 
@@ -28,12 +27,14 @@ jobs:
 
       - name: Check out base ref
         run: |
-          git fetch --no-tags --depth=1 origin ${{ env.GITHUB_BASE_REF }}
-          git fetch --no-tags --depth=1 origin ${{ env.GITHUB_HEAD_REF }}
+          git fetch --no-tags --depth=1 origin $GITHUB_BASE_REF
+          git fetch --no-tags --depth=1 origin $GITHUB_HEAD_REF
+          echo $GITHUB_BASE_REF
+          echo $GITHUB_HEAD_REF
 
       - name: Get working directory
         run: |
-          CODE_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only origin/${{ env.GITHUB_BASE_REF }} origin/${{ env.GITHUB_HEAD_REF }} | egrep -E "\.tf\$|^\/dev|^\/staging|^\/prod" | grep ".*\/" -o | uniq)
+          CODE_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only origin/$GITHUB_BASE_REF origin/$GITHUB_HEAD_REF | egrep -E "\.tf\$|^\/dev|^\/staging|^\/prod" | grep ".*\/" -o | uniq)
           echo "WORKING_DIR=$CODE_DIR" >> $GITHUB_ENV
 
       - name: Setup Terraform
