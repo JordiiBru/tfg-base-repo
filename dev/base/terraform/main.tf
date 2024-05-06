@@ -93,7 +93,7 @@ resource "aws_dynamodb_table" "tfg_tf_locks" {
 ## for CI/CD testing purposes
 
 resource "aws_s3_bucket" "test_bucket_testing" {
-  bucket = "testing-actions-lala"
+   bucket = "testing-actions-lala"
 
   tags = {
     Terraform = var.terraform
