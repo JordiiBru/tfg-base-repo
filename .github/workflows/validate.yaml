@@ -5,7 +5,7 @@ on:
 
 permissions:
   id-token: write
-  contents: read  
+  contents: write-all  
 
 env:
   TF_VERSION: '1.5.7'
