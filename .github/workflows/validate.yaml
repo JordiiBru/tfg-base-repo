@@ -66,6 +66,13 @@ jobs:
         id: fmt
         run: terragrunt fmt -check -recursive --terragrunt-working-dir ${{ env.WORKING_DIR }} -diff
         continue-on-error: false
+      # - name: Check terragrunt HCL
+      #   uses: gruntwork-io/terragrunt-action@v2
+      #   with:
+      #     tf_version: ${{ env.TF_VERSION }}
+      #     tg_version: ${{ env.TG_VERSION }}
+      #     tg_dir: ${{ env.WORKING_DIR }}
+      #     tg_command: 'hclfmt --terragrunt-check --terragrunt-diff'
 
       - name: Terragrunt Validate
         id: validate
