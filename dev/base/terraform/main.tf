@@ -19,10 +19,13 @@ resource "aws_s3_bucket_policy" "states_bucket_policy" {
 
 data "aws_iam_policy_document" "states_bucket_policy" {
   statement {
-    effect    = "Allow"
+    effect = "Allow"
     principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${var.account_ids["aws-jordi-account"]}:root"]
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::${var.account_ids["aws-jordi-account"]}:root",
+        "arn:aws:iam::${var.account_ids["aws-jordi-account"]}:role/tfg-repo-base-cicd"
+      ]
     }
 
     actions = [
@@ -39,7 +42,7 @@ data "aws_iam_policy_document" "states_bucket_policy" {
   }
 
   statement {
-    effect    = "Deny"
+    effect = "Deny"
     principals {
       type        = "AWS"
       identifiers = ["*"]
@@ -73,9 +76,9 @@ resource "aws_s3_bucket_versioning" "tfg_states_versioning" {
 }
 
 resource "aws_dynamodb_table" "tfg_tf_locks" {
-  name         = "tfg-terraform-locks"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "LockID"
+  name                        = "tfg-terraform-locks"
+  billing_mode                = "PAY_PER_REQUEST"
+  hash_key                    = "LockID"
   deletion_protection_enabled = true
 
   attribute {
