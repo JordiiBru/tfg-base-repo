@@ -22,7 +22,10 @@ data "aws_iam_policy_document" "states_bucket_policy" {
     effect = "Allow"
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::${var.account_ids["aws-jordi-account"]}:root"]
+      identifiers = [
+        "arn:aws:iam::${var.account_ids["aws-jordi-account"]}:root",
+        "arn:aws:iam::${var.account_ids["aws-jordi-account"]}:role/tfg-repo-base-cicd"
+      ]
     }
 
     actions = [
@@ -73,7 +76,7 @@ resource "aws_s3_bucket_versioning" "tfg_states_versioning" {
 }
 
 resource "aws_dynamodb_table" "tfg_tf_locks" {
-   name                        = "tfg-terraform-locks"
+  name                        = "tfg-terraform-locks"
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "LockID"
   deletion_protection_enabled = true
@@ -92,12 +95,12 @@ resource "aws_dynamodb_table" "tfg_tf_locks" {
 
 ## for CI/CD testing purposes
 
-resource "aws_s3_bucket" "test_bucket_testing" {
-  bucket = "testing-actions-lala"
+# resource "aws_s3_bucket" "test_bucket_testing" {
+#   bucket = "testing-actions-lala"
 
-  tags = {
-    Terraform = var.terraform
-    Ownership = var.owner
-    Stage     = var.stage
-  }
-}
+#   tags = {
+#     Terraform = var.terraform
+#     Ownership = var.owner
+#     Stage     = var.stage
+#   }
+# }

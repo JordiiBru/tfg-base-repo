@@ -5,7 +5,10 @@ remote_state {
     if_exists = "overwrite_terragrunt"
   }
   config = {
-    bucket = "tfg-terraform-states"
+    bucket                   = "tfg-terraform-states"
+    skip_bucket_root_access  = true
+    skip_bucket_enforced_tls = true
+    disable_bucket_update    = true
 
     key = "${path_relative_to_include()}/terraform.tfstate"
     region         = "eu-west-1"
