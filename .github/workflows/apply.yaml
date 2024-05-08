@@ -1,0 +1,71 @@
+name: 'Apply'
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  id-token: write
+  contents: read  
+
+env:
+  TF_VERSION: '1.5.7'
+  TG_VERSION: 'v0.58.2'
+
+jobs:
+  terraform-apply:
+    name: Terraform apply
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check out base ref
+        run: |
+          git fetch --no-tags --depth=1 origin $GITHUB_BASE_REF
+          git fetch --no-tags --depth=1 origin $GITHUB_HEAD_REF
+          echo $GITHUB_BASE_REF
+          echo $GITHUB_HEAD_REF
+
+      - name: Get working directory
+        run: |
+          CODE_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only origin/$GITHUB_BASE_REF origin/$GITHUB_HEAD_REF | egrep -E "\.tf\$|^\/dev|^\/staging|^\/prod" | grep ".*\/" -o | uniq)
+          echo "WORKING_DIR=$CODE_DIR" >> $GITHUB_ENV
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::522922866161:role/tfg-repo-base-cicd
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: $TF_VERSION
+
+      - name: Verify Terraform version
+        run: terraform --version
+      
+      - name: Setup Terragrunt
+        run: |
+          curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${{ env.TG_VERSION }}/terragrunt_linux_amd64
+          chmod +x terragrunt
+          sudo mv terragrunt /bin
+      
+      - name: Verify Terragrunt version
+        run: terragrunt --version
+
+      - name: Terragrunt init
+        id: init
+        run: terragrunt init -input=false -reconfigure --terragrunt-working-dir ${{ env.WORKING_DIR }}
+      
+      - name: Terragrunt plan
+        id: plan
+        run: terragrunt plan --terragrunt-working-dir ${{ env.WORKING_DIR }} -out workspace.plan
+
+      - name: Terraform apply
+        run: terragrunt apply -auto-approve -input=false --terragrunt-working-dir ${{ env.WORKING_DIR }}
