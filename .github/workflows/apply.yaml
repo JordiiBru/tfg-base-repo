@@ -27,10 +27,7 @@ jobs:
 
       - name: Check out base ref
         run: |
-          git fetch --no-tags --depth=1 origin $GITHUB_BASE_REF
-          git fetch --no-tags --depth=1 origin $GITHUB_HEAD_REF
-          echo $GITHUB_BASE_REF
-          echo $GITHUB_HEAD_REF
+          git fetch --no-tags --depth=2 origin main
 
       - name: Get working directory
         run: |
