@@ -101,5 +101,5 @@ jobs:
         with:
           tfsec_args: --tfvars-file ${{ env.WORKING_DIR }}terraform.tfvars -m HIGH
           soft_fail_commenter: true
-          working_directory: ${{ env.WORKING_DIR }}
+          working_directory: ''
           github_token: ${{ secrets.GITHUB_TOKEN }}
