@@ -1,4 +1,4 @@
-name: 'Apply'
+name: Apply
 on:
   push:
     branches:
