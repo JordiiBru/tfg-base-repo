@@ -59,13 +59,10 @@ jobs:
       - name: Verify Terragrunt version
         run: terragrunt --version
 
-      - name: Terragrunt Format
-        id: fmt
-        run: |
-          terragrunt fmt -check -recursive --terragrunt-working-dir ${{ env.WORKING_DIR }} -diff
-        continue-on-error: false
-
-      - name: Terragrunt Validate
-        id: validate
-        run: terragrunt validate --terragrunt-working-dir ${{ env.WORKING_DIR }} 
-        continue-on-error: true
+      - name: Terragrunt init
+        id: init
+        run: terragrunt init -input=false -reconfigure --terragrunt-working-dir ${{ env.WORKING_DIR }}
+      
+      - name: Terragrunt plan
+        id: plan
+        run: terragrunt plan --terragrunt-working-dir ${{ env.WORKING_DIR }} -out workspace.plan

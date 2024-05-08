@@ -92,3 +92,13 @@ resource "aws_dynamodb_table" "tfg_tf_locks" {
     Stage     = var.stage
   }
 }
+
+resource "aws_s3_bucket" "bucket_testing_lala" {
+  bucket = "bucket-testing-lala"
+
+  tags = {
+    Terraform = var.terraform
+    Ownership = var.owner
+    Stage     = var.stage
+  }
+}
