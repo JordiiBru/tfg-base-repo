@@ -1,4 +1,4 @@
-name: 'Plan'
+name: Plan
 on:
   pull_request:
     types: [opened, reopened, synchronize]
@@ -14,7 +14,7 @@ env:
 jobs:
   terraform-plan:
     name: Terraform plan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest    
     defaults:
       run:
         shell: bash
