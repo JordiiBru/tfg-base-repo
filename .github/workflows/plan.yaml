@@ -63,10 +63,6 @@ jobs:
         id: init
         run: terragrunt init -input=false -reconfigure --terragrunt-working-dir ${{ env.WORKING_DIR }}
       
-      # - name: Terragrunt plan
-      #   id: plan
-      #   run: terragrunt plan --terragrunt-working-dir ${{ env.WORKING_DIR }} -out workspace.plan
-      - name: Terraform plan
+      - name: Terragrunt plan
         id: plan
-        run: |
-          (cd ${{ env.WORKING_DIR }} && terraform plan -input=false)
+        run: terragrunt plan --terragrunt-working-dir ${{ env.WORKING_DIR }} -out workspace.plan
