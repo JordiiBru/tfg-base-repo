@@ -1,7 +1,8 @@
 name: 'Plan'
 on:
-  pull_request:
-    types: [opened, reopened, synchronize]
+  workflow_run:
+    workflows: ["Validate"]
+    types: [completed]
 
 permissions:
   id-token: write
@@ -15,6 +16,7 @@ jobs:
   terraform-plan:
     name: Terraform plan
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
     defaults:
       run:
         shell: bash
