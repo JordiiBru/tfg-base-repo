@@ -100,4 +100,4 @@ jobs:
         uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
         with:
           tfsec_args: --soft-fail -w ${{ env.WORKING_DIR }} --tfvars-file ${{ env.WORKING_DIR }}terraform.tfvars -m HIGH
-          github_token: ${{ github.token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
