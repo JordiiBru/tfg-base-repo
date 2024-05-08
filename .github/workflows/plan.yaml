@@ -1,4 +1,4 @@
-name: 'Validate'
+name: 'Plan'
 on:
   pull_request:
     types: [opened, reopened, synchronize]
@@ -12,8 +12,8 @@ env:
   TG_VERSION: 'v0.58.2'
 
 jobs:
-  terraform-validate:
-    name: Terraform validate
+  terraform-plan:
+    name: Terraform plan
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -35,9 +35,6 @@ jobs:
         run: |
           CODE_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only origin/$GITHUB_BASE_REF origin/$GITHUB_HEAD_REF | egrep -E "\.tf\$|^\/dev|^\/staging|^\/prod" | grep ".*\/" -o | uniq)
           echo "WORKING_DIR=$CODE_DIR" >> $GITHUB_ENV
-      
-      - name: Verify awscli version
-        run: aws --version
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -52,7 +49,7 @@ jobs:
 
       - name: Verify Terraform version
         run: terraform --version
-
+      
       - name: Setup Terragrunt
         run: |
           curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${{ env.TG_VERSION }}/terragrunt_linux_amd64
@@ -62,13 +59,10 @@ jobs:
       - name: Verify Terragrunt version
         run: terragrunt --version
 
-      - name: Terragrunt Format
-        id: fmt
-        run: |
-          terragrunt fmt -check -recursive --terragrunt-working-dir ${{ env.WORKING_DIR }} -diff
-        continue-on-error: false
-
-      - name: Terragrunt Validate
-        id: validate
-        run: terragrunt validate --terragrunt-working-dir ${{ env.WORKING_DIR }} 
-        continue-on-error: true
+      - name: Terragrunt init
+        id: init
+        run: terragrunt init -input=false -reconfigure --terragrunt-working-dir ${{ env.WORKING_DIR }}
+      
+      - name: Terragrunt plan
+        id: plan
+        run: terragrunt plan --terragrunt-working-dir ${{ env.WORKING_DIR }} -out workspace.plan
