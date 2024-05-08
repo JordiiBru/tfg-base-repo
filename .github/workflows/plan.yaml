@@ -1,9 +1,7 @@
 name: Plan
 on:
-  workflow_run:
-    workflows: [Terraform validate]
-    types:
-      - completed
+  pull_request:
+    types: [opened, reopened, synchronize]
 
 permissions:
   id-token: write
