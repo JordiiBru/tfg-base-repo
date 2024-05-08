@@ -69,3 +69,6 @@ jobs:
         id: validate
         run: terragrunt validate --terragrunt-working-dir ${{ env.WORKING_DIR }} 
         continue-on-error: true
+
+      - name: Testing credentials
+        run: aws s3 ls

@@ -1,4 +1,4 @@
-name: 'Validate'
+name: 'Plan'
 on:
   pull_request:
     types: [opened, reopened, synchronize]
@@ -12,8 +12,8 @@ env:
   TG_VERSION: 'v0.58.2'
 
 jobs:
-  terraform-validate:
-    name: Terraform validate
+  terraform-plan:
+    name: Terraform plan
     runs-on: ubuntu-latest
     defaults:
       run:
