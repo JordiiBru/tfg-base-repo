@@ -31,7 +31,7 @@ jobs:
 
       - name: Get working directory
         run: |
-          CODE_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only origin/$GITHUB_BASE_REF origin/$GITHUB_HEAD_REF | egrep -E "\.tf\$|^\/dev|^\/staging|^\/prod" | grep ".*\/" -o | uniq)
+          CODE_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only origin/main origin/main~1 | egrep -E "\.tf\$|^\/dev|^\/staging|^\/prod" | grep ".*\/" -o | uniq)
           echo "WORKING_DIR=$CODE_DIR" >> $GITHUB_ENV
 
       - name: Configure AWS Credentials

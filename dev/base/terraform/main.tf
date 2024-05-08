@@ -58,7 +58,7 @@ data "aws_iam_policy_document" "states_bucket_policy" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "states_access_block" {
+resource "aws_s3_bucket_public_access_block" "tfg_states_access_block" {
   bucket = aws_s3_bucket.tfg_states_bucket.id
 
   block_public_acls       = true
