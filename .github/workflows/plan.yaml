@@ -1,7 +1,7 @@
 name: Plan
 on:
   workflow_run:
-    workflows: ["Validate"]
+    workflows: [Terraform validate]
     types:
       - completed
 
