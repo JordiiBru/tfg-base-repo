@@ -32,12 +32,7 @@ terraform {
     ]
   }
 
-  before_hook "pre_validate_tflint" {
-    commands = ["validate"]
-    execute  = ["tflint", "--init"]
-  }
-
-  after_hook "post_validate_tflint" {
+  before_hook "validate_tflint" {
     commands = ["validate"]
     execute  = ["tflint", "--minimum-failure-severity=error"]
   }
