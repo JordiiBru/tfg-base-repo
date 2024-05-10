@@ -67,7 +67,7 @@ jobs:
 
       - name: Terraform apply
         id: apply
-        run: terragrunt apply -auto-approve -input=false --terragrunt-working-dir ${{ env.WORKING_DIR }}
+        run: terragrunt apply -auto-approve -input=false --terragrunt-working-dir ${{ env.WORKING_DIR }} -no-color
         continue-on-error: true
 
       - name: Post Apply comment
