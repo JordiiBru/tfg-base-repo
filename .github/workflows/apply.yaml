@@ -66,4 +66,53 @@ jobs:
         run: terragrunt plan --terragrunt-working-dir ${{ env.WORKING_DIR }} -out workspace.plan
 
       - name: Terraform apply
-        run: terragrunt apply -auto-approve -input=false --terragrunt-working-dir ${{ env.WORKING_DIR }}
+        id: apply
+        run: terragrunt apply -auto-approve -input=false --terragrunt-working-dir ${{ env.WORKING_DIR }} -no-color
+        continue-on-error: true
+
+      - name: Post Apply comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+
+            const botComment = comments.find(comment => {
+              return comment.user.type === 'Bot' && comment.body.includes('Terraform Apply')
+            })
+
+            const output = `#### Terraform Apply 📘\`${{ steps.apply.outcome }}\`
+            <details><summary>Show Apply</summary>
+
+            \`\`\`\n
+            ${{ steps.apply.outputs.stdout }}
+            \`\`\`
+
+            </details>
+  
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\` in Path: \`${{ env.WORKING_DIR }}\`*`;
+
+            if (botComment) {
+              github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: output
+              })
+            } else {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: output
+              })
+            }
+
+      - name: Terraform Apply Status
+        if: steps.validate.outcome == 'failure'
+        run: exit 1
