@@ -1,7 +1,7 @@
 config {
   format           = "compact"
   plugin_dir       = "~/.tflint.d/plugins"
-  varfile          = ["account.tfvars","env.tfvars"]
+  varfile          = ["account.tfvars"]
 }
 
 plugin "terraform" {
