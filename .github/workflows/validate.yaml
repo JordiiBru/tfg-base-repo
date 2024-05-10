@@ -77,7 +77,7 @@ jobs:
         uses: reviewdog/action-tflint@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          #working_directory: ${{ env.WORKING_DIR }}
+          working_directory: ${{ env.WORKING_DIR }}
           reporter: github-pr-check
           fail_on_error: "false"
           filter_mode: "file"
