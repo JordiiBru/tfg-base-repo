@@ -34,7 +34,7 @@ terraform {
 
   before_hook "validate_tflint" {
     commands = ["validate"]
-    execute  = ["tflint", "--minimum-failure-severity=error"]
+    execute  = ["tflint","--config=${path_relative_from_include()}/.tflint.hcl","--minimum-failure-severity=error"]
   }
 }
 
