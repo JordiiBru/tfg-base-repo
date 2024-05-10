@@ -63,6 +63,11 @@ jobs:
       - name: Verify Terragrunt version
         run: terragrunt --version
 
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
       - name: Terragrunt Format
         id: fmt
         run: |
@@ -151,25 +156,3 @@ jobs:
           soft_fail_commenter: true
           working_directory: ''
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-  TFLint:
-    name: TFLint
-    runs-on: ubuntu-latest
-    needs: terraform-validate
-
-    steps:
-    - name: Checkout source code
-      uses: actions/checkout@v4
-
-    - name: Setup TFLint
-      uses: terraform-linters/setup-tflint@v4
-      with:
-        tflint_version: latest
-
-    - name: Init TFLint
-      run: tflint --init
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Run TFLint
-      run: tflint --minimum-failure-severity=error
