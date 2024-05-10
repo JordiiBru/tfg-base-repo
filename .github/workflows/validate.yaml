@@ -63,15 +63,26 @@ jobs:
       - name: Verify Terragrunt version
         run: terragrunt --version
 
-      - name: Setup TFLint
-        uses: terraform-linters/setup-tflint@v4
-        with:
-          tflint_version: latest
+      # - name: Setup TFLint
+      #   uses: terraform-linters/setup-tflint@v4
+      #   with:
+      #     tflint_version: latest
 
-      - name: Init TFLint
-        run: tflint --init
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Init TFLint
+      #   run: tflint --init
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: tflint
+        uses: reviewdog/action-tflint@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          working_directory: ${{ env.WORKING_DIR }}
+          reporter: github-pr-review
+          fail_on_error: "false"
+          filter_mode: "file"
+          tflint_version: "v0.51.0"
+
 
       - name: Terragrunt Format
         id: fmt
