@@ -58,7 +58,7 @@ data "aws_iam_policy_document" "states_bucket_policy" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "tfg_states_access_block" {
+resource "aws_s3_bucket_public_access_block" "states_access_block" {
   bucket = aws_s3_bucket.tfg_states_bucket.id
 
   block_public_acls       = true
@@ -67,7 +67,7 @@ resource "aws_s3_bucket_public_access_block" "tfg_states_access_block" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_versioning" "tfg_states_versioning" {
+resource "aws_s3_bucket_versioning" "states_versioning" {
   bucket = aws_s3_bucket.tfg_states_bucket.id
 
   versioning_configuration {
