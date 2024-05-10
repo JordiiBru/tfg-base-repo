@@ -15,7 +15,9 @@ env:
 jobs:
   terraform-plan:
     name: Terraform plan
-    runs-on: ubuntu-latest    
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     defaults:
       run:
         shell: bash
