@@ -1,5 +1,5 @@
 config {
-  plugin_dir       = "~/.tflint.d/plugins"
+  plugin_dir = "~/.tflint.d/plugins"
 }
 
 plugin "terraform" {
