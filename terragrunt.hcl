@@ -50,7 +50,13 @@ terraform {
   // }
   before_hook "validate_tflint" {
     commands = ["validate"]
-    execute  = ["sh", "-c", "tflint --minimum-failure-severity=error --no-color --format=compact"]
+    execute = [
+      "sh", "-c", <<EOT
+        (tflint -f compact --minimum-failure-severity=error)
+        error_code=$?
+        exit $error_code
+      EOT
+    ]
   }
 }
 
