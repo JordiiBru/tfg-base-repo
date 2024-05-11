@@ -95,7 +95,8 @@ jobs:
         id: validate
         run: |
           cd ${{ env.WORKING_DIR }}
-          terragrunt validate -no-color
+          validate_tflint=$(terragrunt validate -no-color)
+          echo "$validate_tflint"
         continue-on-error: true
       
       - name: Post Validate comment
@@ -118,7 +119,7 @@ jobs:
             <details><summary>Show Validate</summary>
 
             \`\`\`\n
-            ${{ steps.validate.outputs.stdout }}
+            ${{ steps.validate.outputs.validate_tflint }}
             \`\`\`
 
             </details>
