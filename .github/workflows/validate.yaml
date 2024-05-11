@@ -95,7 +95,8 @@ jobs:
         id: validate
         run: |
           cd ${{ env.WORKING_DIR }}
-          terragrunt validate -no-color
+          terragrunt validate -no-color > validate_output.txt 2>&1
+          echo "::set-output name=stdout::$(<validate_output.txt)"
         continue-on-error: true
       
       - name: Post Validate comment
