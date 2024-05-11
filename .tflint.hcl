@@ -1,5 +1,6 @@
 config {
   plugin_dir = "~/.tflint.d/plugins"
+  format = "compact"
 }
 
 plugin "terraform" {
