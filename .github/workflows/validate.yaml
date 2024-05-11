@@ -73,18 +73,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: tflint
-      #   uses: reviewdog/action-tflint@v1
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     working_directory: ${{ env.WORKING_DIR }}
-      #     reporter: github-pr-check
-      #     fail_on_error: "false"
-      #     filter_mode: "file"
-      #     tflint_version: "v0.51.0"
-      #     tflint_init: "true"
-
-
       - name: Terragrunt Format
         id: fmt
         run: |
@@ -95,8 +83,14 @@ jobs:
         id: validate
         run: |
           cd ${{ env.WORKING_DIR }}
-          terragrunt validate -no-color > validate_output.txt 2>&1
-          echo "::set-output name=stdout::$(<validate_output.txt)"
+          terragrunt validate -no-color
+        continue-on-error: true
+
+      - name: TFLint
+        id: tflint
+        run: |
+          cd ${{ env.WORKING_DIR }}
+          tflint --minimum-failure-severity=error --no-color --format=compact
         continue-on-error: true
       
       - name: Post Validate comment
@@ -120,6 +114,15 @@ jobs:
 
             \`\`\`\n
             ${{ steps.validate.outputs.stdout }}
+            \`\`\`
+
+            </details>
+
+            #### TFLint ⚙️\`${{ steps.init.outcome }}\`
+            <details><summary>Show TFLint Output</summary>
+
+            \`\`\`\n
+             ${{ steps.tflint.outputs.stdout }}
             \`\`\`
 
             </details>
