@@ -48,11 +48,13 @@ terraform {
   //     EOT
   //   ]
   // }
-  after_hook "validate_tflint" {
+  before_hook "validate_tflint" {
     commands = ["validate"]
-    execute = ["tflint","--minimum-failure-severity=error","--no-color"]
+    execute  = ["sh", "-c", "tflint --minimum-failure-severity=error --no-color --format=compact"]
   }
 }
+
+# "tflint","--minimum-failure-severity=error","--no-color"
 
 generate "provider" {
   path      = "provider.tf"
