@@ -94,7 +94,8 @@ jobs:
       - name: Terragrunt Validate
         id: validate
         run: |
-          (cd ${{ env.WORKING_DIR }} && terragrunt validate -no-color)
+          cd ${{ env.WORKING_DIR }}
+          terragrunt validate -no-color
         continue-on-error: true
       
       - name: Post Validate comment
