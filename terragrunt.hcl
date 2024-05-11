@@ -50,7 +50,7 @@ terraform {
   // }
   before_hook "validate_tflint" {
     commands = ["validate"]
-    execute = ["tflint","--minimum-failure-severity=error"]
+    execute = ["tflint","--minimum-failure-severity=error","--no-color"]
   }
 }
 
