@@ -48,6 +48,10 @@ terraform {
   //     EOT
   //   ]
   // }
+  before_hook "validate_tflint" {
+    commands = ["validate"]
+    execute = ["tflint","--minimum-failure-severity=error"]
+  }
 }
 
 generate "provider" {
