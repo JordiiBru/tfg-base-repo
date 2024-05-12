@@ -90,7 +90,8 @@ jobs:
         id: tflint
         run: |
           cd ${{ env.WORKING_DIR }}
-          tflint --minimum-failure-severity=error --no-color --format=compact  > /dev/stdout
+          output=$(tflint --minimum-failure-severity=error --no-color --format=compact)
+          echo "::set-output name=result::$output"
         continue-on-error: true
       
       - name: Post Validate comment
@@ -122,7 +123,7 @@ jobs:
             <details><summary>Show TFLint Output</summary>
 
             \`\`\`\n
-             ${{ steps.tflint.outputs.stdout }}
+             ${{ steps.tflint.outputs.result }}
             \`\`\`
 
             </details>
