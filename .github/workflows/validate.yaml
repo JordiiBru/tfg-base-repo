@@ -90,7 +90,7 @@ jobs:
         id: tflint
         run: |
           cd ${{ env.WORKING_DIR }}
-          tflint --minimum-failure-severity=error --no-color --format=compact
+          tflint --minimum-failure-severity=error --no-color --format=compact --error-with-issues  > /dev/null
         continue-on-error: true
       
       - name: Post Validate comment
