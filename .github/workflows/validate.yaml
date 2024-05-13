@@ -15,7 +15,7 @@ env:
 jobs:
   detect-folders:
     runs-on: ubuntu-latest
-    name: detect folders
+    name: detect folders to apply
     outputs:
       matrix: ${{ steps.detect-folders.outputs.matrix }}
     steps:
