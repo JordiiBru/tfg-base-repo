@@ -39,7 +39,7 @@ jobs:
     needs: detect-folders
     strategy:
       matrix: 
-        dirs: ${{fromJson(needs.changed-tf-dirs.outputs.matrix)}}
+        dirs: ${{ fromJson(needs.changed-tf-dirs.outputs.matrix) }}
     defaults:
       run:
         shell: bash
