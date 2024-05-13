@@ -86,15 +86,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const planOutput = `#### Terraform Plan 📝 for ${{ matrix.dirs }}\`
-            <details><summary>Show Plan</summary>
-            \`\`\`\n
-            ${{ steps.plan.outputs.stdout }}
-            \`\`\`
-            </details>
-
-            *Pushed by: @${{ github.actor }}, Action: ${{ github.event_name }} in Path: ${{ matrix.dirs }}*`;
-
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -102,6 +93,17 @@ jobs:
             });
 
             let botComment = comments.find(comment => comment.user.type === 'Bot' && comment.body.includes(`Terraform Plan for ${{ matrix.dirs }}`));
+
+            const planOutput = `#### Terraform Plan 📝 for \`${{ matrix.dirs }}\`
+            <details><summary>Show Plan</summary>
+
+            \`\`\`\n
+            ${{ steps.plan.outputs.stdout }}
+            \`\`\`
+
+            </details>
+
+            *Pushed by: @${{ github.actor }}, Action: ${{ github.event_name }} in Path: ${{ matrix.dirs }}*`;
 
             if (botComment) {
               await github.rest.issues.updateComment({
