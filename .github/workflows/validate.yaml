@@ -74,7 +74,9 @@ jobs:
 
       - name: Terragrunt Validate
         id: validate
-        run: terragrunt validate --terragrunt-working-dir ${{ env.WORKING_DIR }}
+        run: |
+          cd ${{ env.WORKING_DIR }}
+          terragrunt validate
       
   TFSec:
     name: TFSec
