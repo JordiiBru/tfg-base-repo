@@ -1,3 +1,3 @@
-terraform = var.terraform
-stage     = var.stage
+terraform = true
+stage     = "dev"
 owner     = "jordi"

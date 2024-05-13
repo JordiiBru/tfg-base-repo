@@ -10,7 +10,7 @@ remote_state {
     skip_bucket_enforced_tls = true
     disable_bucket_update    = true
 
-    key = "${path_relative_to_include()}/terraform.tfstate"
+    key            = "${path_relative_to_include()}/terraform.tfstate"
     region         = "eu-west-1"
     encrypt        = true
     dynamodb_table = "tfg-terraform-locks"
@@ -30,6 +30,11 @@ terraform {
       "${find_in_parent_folders("account.tfvars", "skip-account-if-does-not-exist")}",
       "${find_in_parent_folders("env.tfvars", "skip-env-if-does-not-exist")}"
     ]
+  }
+
+  before_hook "validate_tflint" {
+    commands = ["validate"]
+    execute  = ["tflint", "--minimum-failure-severity=error", "--format=compact"]
   }
 }
 
