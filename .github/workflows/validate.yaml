@@ -19,10 +19,10 @@ jobs:
     steps:
       - name: Check folders to apply
         uses: theappnest/terraform-monorepo-action@master
-          id: modules
-          mode: changed
-          with:
-            monitored: '.tf, .hcl'
+        id: modules
+        mode: changed
+        with:
+          monitored: '.tf, .hcl'
   outputs:
     directories: ${{ steps.detect-directories.outputs.directories }}
 
