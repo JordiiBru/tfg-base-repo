@@ -16,15 +16,16 @@ jobs:
   detect-directories:
     name: Folders detection
     runs-on: ubuntu-latest
+    outputs:
+      directories: ${{ steps.detect-directories.outputs.directories }}
     steps:
       - name: Check folders to apply
         uses: theappnest/terraform-monorepo-action@master
-        id: modules
+        id: detect-directories
         mode: changed
         with:
           monitored: '.tf, .hcl'
-  outputs:
-    directories: ${{ steps.detect-directories.outputs.directories }}
+
 
   terraform-validate:
     name: Terraform validate
