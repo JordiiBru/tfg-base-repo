@@ -15,7 +15,7 @@ env:
 jobs:
   detect-folders:
     runs-on: ubuntu-latest
-    name: Test changed-files
+    name: detect folders
     outputs:
       matrix: ${{ steps.changed-tf-dirs.outputs.matrix }}
     steps:
@@ -39,7 +39,9 @@ jobs:
     needs: detect-folders
     strategy:
       matrix: 
-        dirs: ${{ fromJson(needs.changed-tf-dirs.outputs.matrix) }}
+      fail-fast: false
+      matrix:
+        dirs: ${{ fromJson(needs.detect-folders.outputs.matrix != '' && needs.detect-folders.outputs.matrix) }}
     defaults:
       run:
         shell: bash
