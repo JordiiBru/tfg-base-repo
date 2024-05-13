@@ -15,7 +15,7 @@ env:
 jobs:
   detect-folders:
     runs-on: ubuntu-latest
-    name: detect folders to apply
+    name: Detect folders to apply
     outputs:
       matrix: ${{ steps.detect-folders.outputs.all_changed_files }}'
     steps:
@@ -36,7 +36,7 @@ jobs:
         run: echo '${{ steps.detect-folders.outputs.all_changed_files }}'
 
   tf-validate:
-    name: Terraform validate
+    name: tf validate
     runs-on: ubuntu-latest
     needs: detect-folders
     strategy:

@@ -131,7 +131,7 @@ jobs:
     name: Infracost
     if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize')
     runs-on: ubuntu-latest
-    needs: detect-folders
+    needs: [detect-folders, tf-plan]
     strategy:
       fail-fast: false
       matrix:
