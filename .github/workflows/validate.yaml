@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dirs: ${{ needs.changed-files.outputs.matrix =! '' && fromJSON(needs.changed-files.outputs.matrix) }}
+        dirs: ${{ needs.changed-files.outputs.matrix != '' && fromJSON(needs.changed-files.outputs.matrix) }}
     defaults:
       run:
         shell: bash
