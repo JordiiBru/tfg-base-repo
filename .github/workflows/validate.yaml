@@ -38,10 +38,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: detect-folders
     strategy:
-      matrix: 
       fail-fast: false
       matrix:
-        dirs: ${{ fromJson(needs.detect-folders.outputs.matrix != '' && needs.detect-folders.outputs.matrix) }}
+        dirs: ${{ needs.changed-files.outputs.matrix && fromJSON(needs.changed-files.outputs.matrix) }}
     defaults:
       run:
         shell: bash
