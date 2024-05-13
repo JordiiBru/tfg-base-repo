@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "testing_2_lala" {
-  bucket = "testing-2-lala-lala"
+  bucket = "testing-3-lala-lala"
 
   tags = {
     Terraform = var.terraform
