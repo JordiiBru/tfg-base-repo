@@ -77,13 +77,8 @@ jobs:
       
       - name: Terragrunt plan
         id: plan
-        run: terragrunt plan --terragrunt-working-dir ${{ matrix.dirs }} -out workspace.plan -no-color > plan-output.txt
+        run: terragrunt plan --terragrunt-working-dir ${{ matrix.dirs }} -out workspace.plan -no-color
         continue-on-error: true
-
-      - name: Save Plan Output  
-        run: |
-          plan_output="$(cat plan-output.txt)"
-          echo "::set-output name=plan_output::$plan_output"
 
       - name: Post Plan comment
         if: github.event_name == 'pull_request'
@@ -91,10 +86,10 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const planOutput = `#### Terraform Plan 📝 for ${{ matrix.dirs }}
+            const planOutput = `#### Terraform Plan 📝 for ${{ matrix.dirs }}\`
             <details><summary>Show Plan</summary>
-            \`\`\`
-            ${steps.plan.outputs.stdout}
+            \`\`\`\n
+            ${{ steps.plan.outputs.stdout }}
             \`\`\`
             </details>
 
