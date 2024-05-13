@@ -16,6 +16,8 @@ jobs:
   detect-folders:
     runs-on: ubuntu-latest
     name: Test changed-files
+    outputs:
+      matrix: ${{ steps.changed-tf-dirs.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
 
