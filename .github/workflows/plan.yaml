@@ -82,7 +82,7 @@ jobs:
 
       - name: Save Plan Output  
         run: |
-          plan_output="$(cat plan-output.txt)"
+          plan_output="$(cat workspace.plan)"
           echo "::set-output name=plan_output::$plan_output"
 
       - name: Post Plan comment
