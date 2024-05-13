@@ -86,41 +86,37 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const planOutput = `#### Terraform Plan 📝 for ${{ matrix.dirs }}
+            <details><summary>Show Plan</summary>
+            \`\`\`
+            ${process.env.PLAN_OUTPUT}
+            \`\`\`
+            </details>
+
+            *Pushed by: @${{ github.actor }}, Action: ${{ github.event_name }} in Path: ${{ matrix.dirs }}*`;
+
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-            })
+            });
 
-            const botComment = comments.find(comment => {
-              return comment.user.type === 'Bot' && comment.body.includes('Terraform Plan')
-            })
-
-            const output = `#### Terraform Plan 📝\`${{ steps.plan.outcome }}\`
-            <details><summary>Show Plan</summary>
-
-            \`\`\`\n
-            ${{ steps.plan.outputs.stdout }}
-            \`\`\`
-
-            </details>
-  
-            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\` in Path: \`${{ matrix.dirs }}\`*`;
+            let botComment = comments.find(comment => comment.user.type === 'Bot' && comment.body.includes(`Terraform Plan for ${{ matrix.dirs }}`));
 
             if (botComment) {
-              github.rest.issues.updateComment({
+              await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: botComment.id,
-                body: output
-              })
+                body: planOutput
+              });
             } else {
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
+              await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: output
-              })
+                issue_number: context.issue.number,
+                body: planOutput
+              });
             }
 
       - name: Terraform Plan Status
