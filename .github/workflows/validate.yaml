@@ -13,80 +13,86 @@ env:
   TG_VERSION: 'v0.58.2'
 
 jobs:
-  detect-directories:
-    name: Folders detection
+  changed_files:
     runs-on: ubuntu-latest
-    outputs:
-      directories: ${{ steps.detect-directories.outputs.directories }}
+    name: Test changed-files
     steps:
-      - name: Check folders to apply
-        uses: theappnest/terraform-monorepo-action@master
-        id: detect-directories
+      - uses: actions/checkout@v4
+
+      - name: Get all changed tf files
+        id: changed-tf-files
+        uses: tj-actions/changed-files@v44
         with:
-          monitored: '.tf, .hcl'
-          mode: changed
-      
-      - name: Print output directories
-        run: echo "Detected directories: ${{ steps.detect-directories.outputs.directories }}"
+          files: |
+             **.tf
 
-  terraform-validate:
-    name: Terraform validate
-    runs-on: ubuntu-latest
-    needs: detect-directories
-    strategy:
-      matrix:
-        dirs: ${{ fromJson(needs.detect-directories.outputs.directories) }}
-    defaults:
-      run:
-        shell: bash
-        working-directory: ${{ matrix.dirs }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::522922866161:role/tfg-repo-base-cicd
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: $TF_VERSION
-
-      - name: Verify Terraform version
-        run: terraform --version
-
-      - name: Setup Terragrunt
+      - name: List all changed files tf files
+        if: steps.changed-tf-files.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-tf-files.outputs.all_changed_files }}
         run: |
-          curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${{ env.TG_VERSION }}/terragrunt_linux_amd64
-          chmod +x terragrunt
-          sudo mv terragrunt /bin
-          terragrunt --version
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
 
-      - name: Setup TFLint
-        uses: terraform-linters/setup-tflint@v4
-        with:
-          tflint_version: latest
+  # terraform-validate:
+  #   name: Terraform validate
+  #   runs-on: ubuntu-latest
+  #   needs: detect-directories
+  #   strategy:
+  #     matrix:
+  #       dirs: ${{ fromJson(needs.detect-directories.outputs.directories) }}
+  #   defaults:
+  #     run:
+  #       shell: bash
+  #       working-directory: ${{ matrix.dirs }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 2
 
-      - name: Terragrunt Format
-        id: fmt
-        run: |
-          terragrunt fmt -check -recursive -diff
-        continue-on-error: false
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-region: eu-west-1
+  #         role-to-assume: arn:aws:iam::522922866161:role/tfg-repo-base-cicd
 
-      - name: Terragrunt Validate
-        id: validate
-        run: terragrunt validate
+  #     - name: Setup Terraform
+  #       uses: hashicorp/setup-terraform@v3
+  #       with:
+  #         terraform_version: $TF_VERSION
 
-      - name: TFSec
-        id: tfsec
-        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
-        with:
-          tfsec_args: --tfvars-file terraform.tfvars -m CRITICAL
-          soft_fail_commenter: true
-          working_directory: ''
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Verify Terraform version
+  #       run: terraform --version
+
+  #     - name: Setup Terragrunt
+  #       run: |
+  #         curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${{ env.TG_VERSION }}/terragrunt_linux_amd64
+  #         chmod +x terragrunt
+  #         sudo mv terragrunt /bin
+  #         terragrunt --version
+
+  #     - name: Setup TFLint
+  #       uses: terraform-linters/setup-tflint@v4
+  #       with:
+  #         tflint_version: latest
+
+  #     - name: Terragrunt Format
+  #       id: fmt
+  #       run: |
+  #         terragrunt fmt -check -recursive -diff
+  #       continue-on-error: false
+
+  #     - name: Terragrunt Validate
+  #       id: validate
+  #       run: terragrunt validate
+
+  #     - name: TFSec
+  #       id: tfsec
+  #       uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
+  #       with:
+  #         tfsec_args: --tfvars-file terraform.tfvars -m CRITICAL
+  #         soft_fail_commenter: true
+  #         working_directory: ''
+  #         github_token: ${{ secrets.GITHUB_TOKEN }}
