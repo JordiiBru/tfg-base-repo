@@ -80,6 +80,11 @@ jobs:
         run: terragrunt plan --terragrunt-working-dir ${{ matrix.dirs }} -out workspace.plan -no-color
         continue-on-error: true
 
+      - name: Save Plan Output  
+        run: |
+          plan_output="$(cat plan-output.txt)"
+          echo "::set-output name=plan_output::$plan_output"
+
       - name: Post Plan comment
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
