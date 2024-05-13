@@ -32,29 +32,11 @@ terraform {
     ]
   }
 
-  // before_hook "validate_tflint" {
-  //   commands = ["validate"]
-  //   execute  = ["tflint","--config ./.tflint.hcl","--minimum-failure-severity=error"]
-  // }
-  //   after_hook "validate_tflint" {
-  //   commands = ["validate"]
-  //   execute = [
-  //     "sh", "-c", <<EOT
-  //       echo "Run tflint for project '${path_relative_to_include()}'..."
-  //       (tflint --config="${path_relative_from_include()}/.tflint.hcl" --var-file ${find_in_parent_folders("account.tfvars", "skip-account-if-does-not-exist")} --var-file ${find_in_parent_folders("env.tfvars", "skip-env-if-does-not-exist")} -f compact --minimum-failure-severity=error --disable-rule=aws_route_specified_multiple_targets )
-  //       error_code=$?
-  //       echo "Run tflint for project '${path_relative_to_include()}'...DONE\n"
-  //       exit $error_code
-  //     EOT
-  //   ]
-  // }
   before_hook "validate_tflint" {
     commands = ["validate"]
-    execute  = ["sh", "-c", "tflint --minimum-failure-severity=error --no-color --format=compact > /dev/stdout"]
+    execute  = ["tflint --minimum-failure-severity=error --format=compact"]
   }
 }
-
-# "tflint","--minimum-failure-severity=error","--no-color"
 
 generate "provider" {
   path      = "provider.tf"
