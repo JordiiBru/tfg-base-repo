@@ -16,6 +16,7 @@ jobs:
   terraform-validate:
     name: Terraform validate
     runs-on: ubuntu-latest
+    environment: production
     defaults:
       run:
         shell: bash
