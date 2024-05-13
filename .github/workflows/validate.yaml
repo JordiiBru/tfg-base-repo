@@ -27,6 +27,9 @@ jobs:
           matrix: 'true'
           files: |
              **.tf
+      
+      - name: List all changed folders
+        run: echo '${{ steps.changed-tf-dirs.outputs.all_changed_files }}'
 
   terraform-validate:
     name: Terraform validate
@@ -34,7 +37,7 @@ jobs:
     needs: detect-folders
     strategy:
       matrix: 
-        dirs: ${{fromJson(needs.detect-folders.outputs.matrix)}}
+        dirs: ${{fromJson(needs.changed-tf-dirs.outputs.matrix)}}
     defaults:
       run:
         shell: bash
