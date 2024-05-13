@@ -66,6 +66,10 @@ jobs:
         with:
           tflint_version: latest
 
+      - name: Init TFLint
+        id: tflint
+        run: tflint --init
+
       - name: Terragrunt Format
         id: fmt
         run: |
