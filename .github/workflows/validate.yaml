@@ -17,9 +17,11 @@ jobs:
     runs-on: ubuntu-latest
     name: detect folders to apply
     outputs:
-      matrix: ${{ steps.detect-folders.outputs.matrix }}
+      matrix: ${{ steps.detect-folders.outputs.all_changed_files }}'
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Get all changed directories into matrix
         id: detect-folders
