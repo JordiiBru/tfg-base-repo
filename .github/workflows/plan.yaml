@@ -77,12 +77,12 @@ jobs:
       
       - name: Terragrunt plan
         id: plan
-        run: terragrunt plan --terragrunt-working-dir ${{ matrix.dirs }} -out workspace.plan -no-color
+        run: terragrunt plan --terragrunt-working-dir ${{ matrix.dirs }} -out workspace.plan -no-color > plan-output.txt
         continue-on-error: true
 
       - name: Save Plan Output  
         run: |
-          plan_output="$(cat workspace.plan)"
+          plan_output="$(cat plan-output.txt)"
           echo "::set-output name=plan_output::$plan_output"
 
       - name: Post Plan comment
