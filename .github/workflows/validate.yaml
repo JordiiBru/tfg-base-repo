@@ -22,10 +22,9 @@ jobs:
       - name: Check folders to apply
         uses: theappnest/terraform-monorepo-action@master
         id: detect-directories
-        mode: changed
         with:
           monitored: '.tf, .hcl'
-
+          mode: changed
 
   terraform-validate:
     name: Terraform validate
