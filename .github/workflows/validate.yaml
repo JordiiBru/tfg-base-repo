@@ -17,21 +17,21 @@ jobs:
     runs-on: ubuntu-latest
     name: detect folders
     outputs:
-      matrix: ${{ steps.changed-tf-dirs.outputs.matrix }}
+      matrix: ${{ steps.detect-folders.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Get all changed directories into matrix
-        id: changed-tf-dirs
+        id: detect-folders
         uses: tj-actions/changed-files@v44
         with:
           dir_names: 'true'
-          json: 'true'
+          matrix: 'true'
           files: |
              **.tf
       
       - name: List all changed folders
-        run: echo '${{ steps.changed-tf-dirs.outputs.all_changed_files }}'
+        run: echo '${{ steps.detect-folders.outputs.all_changed_files }}'
 
   terraform-validate:
     name: Terraform validate
@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dirs: ${{ fromJSON(needs.changed-files.outputs.matrix) }}
+        dirs: ${{ fromJSON(needs.detect-folders.outputs.matrix) }}
     defaults:
       run:
         shell: bash
