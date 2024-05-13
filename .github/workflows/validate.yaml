@@ -25,6 +25,9 @@ jobs:
         with:
           monitored: '.tf, .hcl'
           mode: changed
+      
+      - name: Print output directories
+        run: echo "Detected directories: ${{ steps.detect-directories.outputs.directories }}"
 
   terraform-validate:
     name: Terraform validate
