@@ -89,7 +89,7 @@ jobs:
             const planOutput = `#### Terraform Plan 📝 for ${{ matrix.dirs }}
             <details><summary>Show Plan</summary>
             \`\`\`
-            ${process.env.PLAN_OUTPUT}
+            ${steps.plan.outputs.stdout}
             \`\`\`
             </details>
 
