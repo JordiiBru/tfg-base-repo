@@ -59,19 +59,12 @@ jobs:
           curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${{ env.TG_VERSION }}/terragrunt_linux_amd64
           chmod +x terragrunt
           sudo mv terragrunt /bin
-      
-      - name: Verify Terragrunt version
-        run: terragrunt --version
+          terragrunt --version
 
       - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v4
         with:
           tflint_version: latest
-
-      # - name: Init TFLint
-      #   run: tflint --init
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Terragrunt Format
         id: fmt
@@ -81,9 +74,7 @@ jobs:
 
       - name: Terragrunt Validate
         id: validate
-        run: |
-          cd ${{ env.WORKING_DIR }}
-          terragrunt validate
+        run: terragrunt validate --terragrunt-working-dir ${{ env.WORKING_DIR }}
       
   TFSec:
     name: TFSec
