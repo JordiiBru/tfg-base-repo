@@ -86,13 +86,21 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const issue_number = context.issue.number;
+            const repo = context.repo.repo;
+            const owner = context.repo.owner;
+
             const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
+              owner: owner,
+              repo: repo,
+              issue_number: issue_number,
             });
 
-            let botComment = comments.find(comment => comment.user.type === 'Bot' && comment.body.includes(`Terraform Plan for ${{ matrix.dirs }}`));
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('Terraform Plan') &&
+              comment.body.includes(`Path: \`${{ matrix.dirs }}\``)
+            );
 
             const planOutput = `#### Terraform Plan 📝 for \`${{ matrix.dirs }}\`
             <details><summary>Show Plan</summary>
@@ -103,20 +111,20 @@ jobs:
 
             </details>
 
-            *Pushed by: @${{ github.actor }}, Action: ${{ github.event_name }} in Path: ${{ matrix.dirs }}*`;
+            *Pushed by: @${{ github.actor }}, Action: ${{ github.event_name }} in Path: \`${{ matrix.dirs }}\`*`;
 
             if (botComment) {
               await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
+                owner: owner,
+                repo: repo,
                 comment_id: botComment.id,
                 body: planOutput
               });
             } else {
               await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
+                owner: owner,
+                repo: repo,
+                issue_number: issue_number,
                 body: planOutput
               });
             }
