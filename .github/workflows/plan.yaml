@@ -13,29 +13,42 @@ env:
   TG_VERSION: 'v0.58.2'
 
 jobs:
-  terraform-plan:
+  detect-folders:
+    runs-on: ubuntu-latest
+    name: detect folders to apply
+    outputs:
+      matrix: ${{ steps.detect-folders.outputs.all_changed_files }}'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get all changed directories into matrix
+        id: detect-folders
+        uses: tj-actions/changed-files@v44
+        with:
+          dir_names: 'true'
+          matrix: 'true'
+          files: |
+             **.tf
+      
+      - name: List all changed folders
+        run: echo '${{ steps.detect-folders.outputs.all_changed_files }}'
+
+  tf-plan:
     name: Terraform plan
-    runs-on: ubuntu-latest    
+    runs-on: ubuntu-latest   
+    needs: detect-folders
+    strategy:
+      fail-fast: false
+      matrix:
+          dirs: ${{ fromJSON(needs.detect-folders.outputs.matrix) }} 
     defaults:
       run:
         shell: bash
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Check out base ref
-        run: |
-          git fetch --no-tags --depth=1 origin $GITHUB_BASE_REF
-          git fetch --no-tags --depth=1 origin $GITHUB_HEAD_REF
-          echo $GITHUB_BASE_REF
-          echo $GITHUB_HEAD_REF
-
-      - name: Get working directory
-        run: |
-          CODE_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only origin/$GITHUB_BASE_REF origin/$GITHUB_HEAD_REF | egrep -E "\.tf\$|^\/dev|^\/staging|^\/prod" | grep ".*\/" -o | uniq)
-          echo "WORKING_DIR=$CODE_DIR" >> $GITHUB_ENV
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -56,17 +69,15 @@ jobs:
           curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${{ env.TG_VERSION }}/terragrunt_linux_amd64
           chmod +x terragrunt
           sudo mv terragrunt /bin
-      
-      - name: Verify Terragrunt version
-        run: terragrunt --version
+          terragrunt --version
 
       - name: Terragrunt init
         id: init
-        run: terragrunt init -input=false -reconfigure --terragrunt-working-dir ${{ env.WORKING_DIR }}
+        run: terragrunt init -input=false -reconfigure --terragrunt-working-dir ${{ matrix.dirs }}
       
       - name: Terragrunt plan
         id: plan
-        run: terragrunt plan --terragrunt-working-dir ${{ env.WORKING_DIR }} -out workspace.plan -no-color
+        run: terragrunt plan --terragrunt-working-dir ${{ matrix.dirs }} -out workspace.plan -no-color
         continue-on-error: true
 
       - name: Post Plan comment
@@ -94,7 +105,7 @@ jobs:
 
             </details>
   
-            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\` in Path: \`${{ env.WORKING_DIR }}\`*`;
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\` in Path: \`${{ matrix.dirs }}\`*`;
 
             if (botComment) {
               github.rest.issues.updateComment({
@@ -121,27 +132,16 @@ jobs:
     if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize')
     runs-on: ubuntu-latest
     needs: terraform-plan
+    strategy:
+      fail-fast: false
+      matrix:
+          dirs: ${{ fromJSON(needs.detect-folders.outputs.matrix) }} 
     defaults:
       run:
         shell: bash
-
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 2
-
-    - name: Check out base ref
-      run: |
-        git fetch --no-tags --depth=1 origin $GITHUB_BASE_REF
-        git fetch --no-tags --depth=1 origin $GITHUB_HEAD_REF
-        echo $GITHUB_BASE_REF
-        echo $GITHUB_HEAD_REF
-
-    - name: Get working directory
-      run: |
-        CODE_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only origin/$GITHUB_BASE_REF origin/$GITHUB_HEAD_REF | egrep -E "\.tf\$|^\/dev|^\/staging|^\/prod" | grep ".*\/" -o | uniq)
-        echo "WORKING_DIR=$CODE_DIR" >> $GITHUB_ENV
 
     - name: Setup Infracost
       uses: infracost/actions/setup@v3
@@ -155,14 +155,14 @@ jobs:
 
     - name: Infracost Breakdown of base branch
       run: |
-        infracost breakdown --path=${{ env.WORKING_DIR }} --format=json --out-file=/tmp/infracost-base.json
+        infracost breakdown --path=${{ matrix.dirs }} --format=json --out-file=/tmp/infracost-base.json
 
     - name: Checkout PR branch
       uses: actions/checkout@v4
 
     - name: Infracost Diff Base vs PR Branch
       run: |
-        infracost diff --path=${{ env.WORKING_DIR }} --format=json --compare-to=/tmp/infracost-base.json --out-file=/tmp/infracost.json
+        infracost diff --path=${{ matrix.dirs }} --format=json --compare-to=/tmp/infracost-base.json --out-file=/tmp/infracost.json
 
     - name: Infracost PR comment
       run: |
