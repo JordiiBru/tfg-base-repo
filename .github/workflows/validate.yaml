@@ -14,16 +14,14 @@ env:
 
 jobs:
   detect-directories:
+      name: Folders detection
       runs-on: ubuntu-latest
       steps:
         - uses: theappnest/terraform-monorepo-action@master
           id: modules
+          mode: changed
           with:
-            monitored: '.tpl, .hcl, .terraform.lock.hcl'
-            ignore: |
-              */*
-              !modules/**
-              modules/ignored/*
+            monitored: '.tf, .hcl'
   outputs:
     directories: ${{ steps.detect-directories.outputs.directories }}
 
