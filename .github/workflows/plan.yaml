@@ -196,9 +196,9 @@ jobs:
 
     - name: Download Artifacts
       uses: actions/download-artifact@v4
-        with:
-          name: infracost-results*
-          path: /tmp/infracost-results
+      with:
+        name: infracost-results*
+        path: /tmp/infracost-results
 
     - name: Combine JSON results
       run: |
