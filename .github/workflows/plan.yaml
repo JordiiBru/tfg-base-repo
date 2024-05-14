@@ -177,9 +177,8 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: infracost-results-${CLEANED_DIR}
-        path: |
-          /tmp/infracost-diff/
+        name: infracost-results-${{ matrix.dirs }}
+        path: /tmp/infracost-diff/
 
   post-infracost:
     name: Combine Infracost Results
@@ -197,7 +196,7 @@ jobs:
     - name: Download Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: AQUI TIENE QUE IR EL NOMBRE DEL NAME del stage upload artifact
+        name: infracost-results-${{ matrix.dirs }}
         path: /tmp/infracost-results
 
     - name: Combine JSON results
