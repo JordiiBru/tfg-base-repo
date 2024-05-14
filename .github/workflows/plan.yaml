@@ -184,6 +184,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [run-infracost]
     steps:
+    - name: Setup Infracost
+      uses: infracost/actions/setup@v3
+      with:
+        api-key: ${{ secrets.INFRACOST_API_KEY }}
+
     - name: Checkout
       uses: actions/checkout@v4
 
