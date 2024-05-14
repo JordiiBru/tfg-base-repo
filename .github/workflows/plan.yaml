@@ -194,7 +194,13 @@ jobs:
 
     - name: Combine JSON results
       run: |
-        infracost output --path "/tmp/infracost-diff/infracost-diff-*.json" --format json --out-file /tmp/infracost-combined.json
+        ls /tmp/infracost-diff/
+        if ls /tmp/infracost-diff/infracost-diff-*.json 1> /dev/null 2>&1; then
+          infracost output --path "/tmp/infracost-diff/infracost-diff-*.json" --format json --out-file /tmp/infracost-combined.json
+        else
+          echo "No JSON files found for combining."
+          exit 1
+        fi
 
     - name: Infracost PR comment
       run: |
