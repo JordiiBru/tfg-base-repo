@@ -174,10 +174,10 @@ jobs:
         mkdir -p /tmp/infracost-diff
         infracost diff --path=${{ matrix.dirs }} --format=json --compare-to=/tmp/infracost-base/infracost-base-${CLEANED_DIR}.json --out-file=/tmp/infracost-diff/infracost-diff-${CLEANED_DIR}.json
 
- - name: Upload Artifact
-      run: |
-        CLEANED_DIR=$(echo "${{ matrix.dirs }}" | sed 's/[^a-zA-Z0-9]/_/g')
-        actions/upload-artifact@v4 --name infracost-results-${CLEANED_DIR} --path /tmp/infracost-base/infracost-base-${CLEANED_DIR}-${UNIQUE_ID}.json,/tmp/infracost-diff/infracost-diff-${CLEANED_DIR}-${UNIQUE_ID}.json
+    - name: Upload Artifact
+          run: |
+            CLEANED_DIR=$(echo "${{ matrix.dirs }}" | sed 's/[^a-zA-Z0-9]/_/g')
+            actions/upload-artifact@v4 --name infracost-results-${CLEANED_DIR} --path /tmp/infracost-base/infracost-base-${CLEANED_DIR}-${UNIQUE_ID}.json,/tmp/infracost-diff/infracost-diff-${CLEANED_DIR}-${UNIQUE_ID}.json
 
   # post-infracost:
   #   name: Combine Infracost Results
