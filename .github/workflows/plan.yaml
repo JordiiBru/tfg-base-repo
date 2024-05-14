@@ -161,15 +161,17 @@ jobs:
 
     - name: Infracost Breakdown of base branch
       run: |
-        infracost breakdown --path=${{ matrix.dirs }} --format=json --out-file=/tmp/infracost-base.json
+        infracost breakdown --path=${{ matrix.dirs }} --format=json --out-file=/tmp/infracost-base-${{ matrix.dirs }}.json
 
     - name: Checkout PR branch
       uses: actions/checkout@v4
 
     - name: Infracost Diff Base vs PR Branch
       run: |
-        infracost diff --path=${{ matrix.dirs }} --format=json --compare-to=/tmp/infracost-base.json --out-file=/tmp/infracost.json
+        UNIQUE_ID=${{ github.job }}-${{ github.run_number }}
+        infracost diff --path=${{ matrix.dirs }} --format=json --compare-to=/tmp/infracost-base-${UNIQUE_ID}.json --out-file=/tmp/infracost-${UNIQUE_ID}.json
 
     - name: Infracost PR comment
       run: |
-        infracost comment github --path=/tmp/infracost.json --repo=$GITHUB_REPOSITORY --github-token=${{ secrets.GITHUB_TOKEN }} --pull-request=${{ github.event.pull_request.number }} --behavior=update
+        UNIQUE_ID=${{ github.job }}-${{ github.run_number }}
+        infracost comment github --path=/tmp/infracost-${UNIQUE_ID}.json --repo=$GITHUB_REPOSITORY --github-token=${{ secrets.GITHUB_TOKEN }} --pull-request=${{ github.event.pull_request.number }} --behavior=update
