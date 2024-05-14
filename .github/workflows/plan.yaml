@@ -172,14 +172,14 @@ jobs:
       run: |
         CLEANED_DIR=$(echo "${{ matrix.dirs }}" | sed 's/[^a-zA-Z0-9]/_/g')
         mkdir -p /tmp/infracost-diff
-        infracost diff --path=${{ matrix.dirs }} --format=json --compare-to=/tmp/infracost-base/infracost-base-${CLEANED_DIR}.json --out-file=/tmp/infracost-diff/infracost-diff-${{ github.job }}-${{ github.run_number }}.json
+        infracost diff --path=${{ matrix.dirs }} --format=json --compare-to=/tmp/infracost-base/infracost-base-${CLEANED_DIR}.json --out-file=/tmp/infracost-diff/infracost-diff-${CLEANED_DIR}-${CLEANED_DIR}.json
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: infracost-results-${{ github.job }}-${{ github.run_number }}
+        name: infracost-results-${CLEANED_DIR}
         path: |
-          /tmp/infracost-diff/infracost-diff-${{ github.job }}-${{ github.run_number }}.json
+          /tmp/infracost-diff/
 
   post-infracost:
     name: Combine Infracost Results
@@ -197,7 +197,7 @@ jobs:
     - name: Download Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: infracost-results*
+        name: AQUI TIENE QUE IR EL NOMBRE DEL NAME del stage upload artifact
         path: /tmp/infracost-results
 
     - name: Combine JSON results
