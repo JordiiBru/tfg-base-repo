@@ -175,36 +175,35 @@ jobs:
         infracost diff --path=${{ matrix.dirs }} --format=json --compare-to=/tmp/infracost-base/infracost-base-${CLEANED_DIR}.json --out-file=/tmp/infracost-diff/infracost-diff-${CLEANED_DIR}.json
 
     - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: infracost-results-${{ github.job }}-${{ github.run_number }}
+        path: |
+          /tmp/infracost-diff/infracost-diff-${CLEANED_DIR}.json
+
+  post-infracost:
+    name: Combine Infracost Results
+    runs-on: ubuntu-latest
+    needs: [detect-folders,tf-plan,run-infracost]
+    steps:
+    - name: Setup Infracost
+      uses: infracost/actions/setup@v3
+      with:
+        api-key: ${{ secrets.INFRACOST_API_KEY }}
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Download Artifacts
+      uses: actions/download-artifact@v4
+        with:
+          name: infracost-results*
+          path: /tmp/infracost-results
+
+    - name: Combine JSON results
       run: |
-        CLEANED_DIR=$(echo "${{ matrix.dirs }}" | sed 's/[^a-zA-Z0-9]/_/g')
-        actions/upload-artifact@v4 --name infracost-results-${CLEANED_DIR} --path /tmp/infracost-base/infracost-base-${CLEANED_DIR}-${UNIQUE_ID}.json,/tmp/infracost-diff/infracost-diff-${CLEANED_DIR}-${UNIQUE_ID}.json
+          infracost output --path "/tmp/infracost-results/**/*.json" --format json --out-file /tmp/infracost-combined.json
 
-  # post-infracost:
-  #   name: Combine Infracost Results
-  #   runs-on: ubuntu-latest
-  #   needs: [detect-folders,tf-plan,run-infracost]
-  #   steps:
-  #   - name: Setup Infracost
-  #     uses: infracost/actions/setup@v3
-  #     with:
-  #       api-key: ${{ secrets.INFRACOST_API_KEY }}
-
-  #   - name: Checkout
-  #     uses: actions/checkout@v4
-
-  #   - name: Download Artifacts
-  #     run: |
-  #       for dir in ${{ fromJSON(needs.detect-folders.outputs.matrix) }}; do
-  #         CLEANED_DIR=$(echo "${dir}" | sed 's/[^a-zA-Z0-9]/_/g')
-  #         actions/download-artifact@v4
-  #           name: infracost-results-${CLEANED_DIR}
-  #           path: /tmp/infracost-results/${CLEANED_DIR}
-  #       done
-
-  #   - name: Combine JSON results
-  #     run: |
-  #         infracost output --path "/tmp/infracost-results/**/*.json" --format json --out-file /tmp/infracost-combined.json
-
-  #   - name: Infracost PR comment
-  #     run: |
-  #       infracost comment github --path=/tmp/infracost-combined.json --repo=$GITHUB_REPOSITORY --github-token=${{ secrets.GITHUB_TOKEN }} --pull-request=${{ github.event.pull_request.number }} --behavior=update
+    - name: Infracost PR comment
+      run: |
+        infracost comment github --path=/tmp/infracost-combined.json --repo=$GITHUB_REPOSITORY --github-token=${{ secrets.GITHUB_TOKEN }} --pull-request=${{ github.event.pull_request.number }} --behavior=update
