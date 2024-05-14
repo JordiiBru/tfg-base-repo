@@ -172,7 +172,7 @@ jobs:
       run: |
         CLEANED_DIR=$(echo "${{ matrix.dirs }}" | sed 's/[^a-zA-Z0-9]/_/g')
         mkdir -p /tmp/infracost-diff
-        infracost diff --path=${{ matrix.dirs }} --format=json --compare-to=/tmp/infracost-base/infracost-base-${CLEANED_DIR}.json --out-file=/tmp/infracost-diff/infracost-diff-${CLEANED_DIR}.json
+        infracost diff --path=${{ matrix.dirs }} --format=json --compare-to=/tmp/infracost-base/infracost-base-${CLEANED_DIR}.json --out-file=/tmp/infracost-diff/infracost-diff-${{ github.job }}-${{ github.run_number }}.json
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
