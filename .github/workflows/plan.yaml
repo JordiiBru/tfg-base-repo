@@ -179,7 +179,7 @@ jobs:
       with:
         name: infracost-results-${{ github.job }}-${{ github.run_number }}
         path: |
-          /tmp/infracost-diff/infracost-diff-${CLEANED_DIR}.json
+          /tmp/infracost-diff/infracost-diff-${{ github.job }}-${{ github.run_number }}.json
 
   post-infracost:
     name: Combine Infracost Results
