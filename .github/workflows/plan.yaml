@@ -161,7 +161,8 @@ jobs:
 
     - name: Infracost Breakdown of base branch
       run: |
-        infracost breakdown --path=${{ matrix.dirs }} --format=json --out-file=/tmp/infracost-base-${{ matrix.dirs }}.json
+        UNIQUE_ID=${{ github.job }}-${{ github.run_number }}
+        infracost breakdown --path=${{ matrix.dirs }} --format=json --out-file=/tmp/infracost-base-${UNIQUE_ID}.json
 
     - name: Checkout PR branch
       uses: actions/checkout@v4
