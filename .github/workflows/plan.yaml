@@ -186,7 +186,7 @@ jobs:
   post-infracost:
     name: Combine Infracost Results
     runs-on: ubuntu-latest
-    needs: [detect-folders,tf-run,run-infracost]
+    needs: [detect-folders,tf-plan,run-infracost]
     steps:
     - name: Setup Infracost
       uses: infracost/actions/setup@v3
