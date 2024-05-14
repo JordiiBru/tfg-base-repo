@@ -179,8 +179,8 @@ jobs:
       with:
         name: infracost-results-${CLEANED_DIR}
         path: |
-          /tmp/infracost-base/
-          /tmp/infracost-diff/
+          /tmp/infracost-base/infracost-base-${CLEANED_DIR.json
+          /tmp/infracost-diff/infracost-diff-${CLEANED_DIR}.json
 
   post-infracost:
     name: Combine Infracost Results
