@@ -13,26 +13,42 @@ env:
   TG_VERSION: 'v0.58.2'
 
 jobs:
+  detect-folders:
+    runs-on: ubuntu-latest
+    name: Detect folders to apply
+    outputs:
+      matrix: ${{ steps.detect-folders.outputs.all_changed_files }}'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get all changed directories into matrix
+        id: detect-folders
+        uses: tj-actions/changed-files@v44
+        with:
+          dir_names: 'true'
+          matrix: 'true'
+          files: |
+             **.tf
+      
+      - name: List all changed folders
+        run: echo '${{ steps.detect-folders.outputs.all_changed_files }}'
+
   terraform-apply:
     name: Terraform apply
     runs-on: ubuntu-latest
+    needs: detect-folders
+    strategy:
+      fail-fast: false
+      matrix:
+        dirs: ${{ fromJSON(needs.detect-folders.outputs.matrix) }}
     defaults:
       run:
         shell: bash
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Check out base ref
-        run: |
-          git fetch --no-tags --depth=2 origin main
-
-      - name: Get working directory
-        run: |
-          CODE_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only origin/main origin/main~1 | egrep -E "\.tf\$|^\/dev|^\/staging|^\/prod" | grep ".*\/" -o | uniq)
-          echo "WORKING_DIR=$CODE_DIR" >> $GITHUB_ENV
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -44,9 +60,6 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: $TF_VERSION
-
-      - name: Verify Terraform version
-        run: terraform --version
       
       - name: Setup Terragrunt
         run: |
@@ -56,12 +69,12 @@ jobs:
 
       - name: Terragrunt init
         id: init
-        run: terragrunt init -input=false -reconfigure --terragrunt-working-dir ${{ env.WORKING_DIR }}
+        run: terragrunt init -input=false -reconfigure --terragrunt-working-dir ${{ matrix.dirs }}
       
       - name: Terragrunt plan
         id: plan
-        run: terragrunt plan --terragrunt-working-dir ${{ env.WORKING_DIR }} -out workspace.plan
+        run: terragrunt plan --terragrunt-working-dir ${{ matrix.dirs }} -out workspace.plan
 
       - name: Terraform apply
         id: apply
-        run: terragrunt apply -auto-approve -input=false --terragrunt-working-dir ${{ env.WORKING_DIR }}
+        run: terragrunt apply -auto-approve -input=false --terragrunt-working-dir ${{ matrix.dirs }}

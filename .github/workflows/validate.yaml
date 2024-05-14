@@ -13,32 +13,42 @@ env:
   TG_VERSION: 'v0.58.2'
 
 jobs:
+  detect-folders:
+    runs-on: ubuntu-latest
+    name: Detect folders to apply
+    outputs:
+      matrix: ${{ steps.detect-folders.outputs.all_changed_files }}'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get all changed directories into matrix
+        id: detect-folders
+        uses: tj-actions/changed-files@v44
+        with:
+          dir_names: 'true'
+          matrix: 'true'
+          files: |
+             **.tf
+      
+      - name: List all changed folders
+        run: echo '${{ steps.detect-folders.outputs.all_changed_files }}'
+
   terraform-validate:
     name: Terraform validate
     runs-on: ubuntu-latest
+    needs: detect-folders
+    strategy:
+      fail-fast: false
+      matrix:
+        dirs: ${{ fromJSON(needs.detect-folders.outputs.matrix) }}
     defaults:
       run:
         shell: bash
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Check out base ref
-        run: |
-          git fetch --no-tags --depth=1 origin $GITHUB_BASE_REF
-          git fetch --no-tags --depth=1 origin $GITHUB_HEAD_REF
-          echo $GITHUB_BASE_REF
-          echo $GITHUB_HEAD_REF
-
-      - name: Get working directory
-        run: |
-          CODE_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only origin/$GITHUB_BASE_REF origin/$GITHUB_HEAD_REF | egrep -E "\.tf\$|^\/dev|^\/staging|^\/prod" | grep ".*\/" -o | uniq)
-          echo "WORKING_DIR=$CODE_DIR" >> $GITHUB_ENV
-      
-      - name: Verify awscli version
-        run: aws --version
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -69,42 +79,20 @@ jobs:
       - name: Terragrunt Format
         id: fmt
         run: |
-          terragrunt fmt -check -recursive --terragrunt-working-dir ${{ env.WORKING_DIR }} -diff
+          terragrunt fmt -check -recursive --terragrunt-working-dir ${{ matrix.dirs }} -diff
         continue-on-error: false
 
       - name: Terragrunt Validate
         id: validate
         run: |
-          cd ${{ env.WORKING_DIR }}
+          cd ${{ matrix.dirs }}
           terragrunt validate
-      
-  TFSec:
-    name: TFSec
-    runs-on: ubuntu-latest
-    needs: terraform-validate
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Check out base ref
-        run: |
-          git fetch --no-tags --depth=1 origin $GITHUB_BASE_REF
-          git fetch --no-tags --depth=1 origin $GITHUB_HEAD_REF
-          echo $GITHUB_BASE_REF
-          echo $GITHUB_HEAD_REF
-
-      - name: Get working directory
-        run: |
-          CODE_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only origin/$GITHUB_BASE_REF origin/$GITHUB_HEAD_REF | egrep -E "\.tf\$|^\/dev|^\/staging|^\/prod" | grep ".*\/" -o | uniq)
-          echo "WORKING_DIR=$CODE_DIR" >> $GITHUB_ENV
-
-      - name: tfsec
+      - name: TFSec
+        id: tfsec
         uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
         with:
-          tfsec_args: --tfvars-file ${{ env.WORKING_DIR }}terraform.tfvars -m CRITICAL
+          tfsec_args: --tfvars-file ${{ matrix.dirs }}/terraform.tfvars -m CRITICAL
           soft_fail_commenter: true
           working_directory: ''
           github_token: ${{ secrets.GITHUB_TOKEN }}
