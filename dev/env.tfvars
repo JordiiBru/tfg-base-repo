@@ -1,2 +1,1 @@
-terraform = true
 stage     = "dev"
