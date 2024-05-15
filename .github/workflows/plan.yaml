@@ -146,8 +146,6 @@ jobs:
     defaults:
       run:
         shell: bash
-    env:
-      CLEANED_DIR: ${{ matrix.dirs }} | sed 's/[^a-zA-Z0-9]/_/g'
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -164,6 +162,7 @@ jobs:
 
     - name: Infracost Breakdown of base branch
       run: |
+        CLEANED_DIR=$(echo "${{ matrix.dirs }}" | sed 's/[^a-zA-Z0-9]/_/g')
         infracost breakdown --path=${{ matrix.dirs }} --format=json --out-file=/tmp/infracost-base-${CLEANED_DIR}.json
 
     - name: Checkout PR branch
@@ -171,8 +170,10 @@ jobs:
 
     - name: Infracost Diff Base vs PR Branch
       run: |
+        CLEANED_DIR=$(echo "${{ matrix.dirs }}" | sed 's/[^a-zA-Z0-9]/_/g')
         infracost diff --path=${{ matrix.dirs }} --format=json --compare-to=/tmp/infracost-base-${CLEANED_DIR}.json --out-file=/tmp/infracost-diff-${CLEANED_DIR}.json
 
     - name: Infracost PR comment
       run: |
+        CLEANED_DIR=$(echo "${{ matrix.dirs }}" | sed 's/[^a-zA-Z0-9]/_/g')
         infracost comment github --path=/tmp/infracost-diff-${CLEANED_DIR}.json --repo=$GITHUB_REPOSITORY --github-token=${{ secrets.GITHUB_TOKEN }} --pull-request=${{ github.event.pull_request.number }} --behavior=update --tag ${CLEANED_DIR}
