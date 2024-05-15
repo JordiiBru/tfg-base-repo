@@ -37,7 +37,8 @@ jobs:
 
   terraform-plan:
     name: Terraform plan
-    runs-on: ubuntu-latest   
+    runs-on: ubuntu-latest
+    if: needs.detect-folders.outputs.matrix != '[]'  
     needs: detect-folders
     strategy:
       fail-fast: false

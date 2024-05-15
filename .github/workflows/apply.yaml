@@ -38,6 +38,7 @@ jobs:
   terraform-apply:
     name: Terraform apply
     runs-on: ubuntu-latest
+    if: needs.detect-folders.outputs.matrix != '[]'
     needs: detect-folders
     strategy:
       fail-fast: false
