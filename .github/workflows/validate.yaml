@@ -38,6 +38,7 @@ jobs:
   terraform-validate:
     name: Terraform validate
     runs-on: ubuntu-latest
+    if: needs.detect-folders.outputs.matrix != '[]'
     needs: detect-folders
     strategy:
       fail-fast: false
