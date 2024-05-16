@@ -93,7 +93,7 @@ jobs:
         id: tfsec
         uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
         with:
-          tfsec_args: --tfvars-file ${{ matrix.dirs }}/terraform.tfvars -m CRITICAL
+          tfsec_args: --tfvars-file ${{ matrix.dirs }}/terraform.tfvars -m HIGH
           soft_fail_commenter: true
           working_directory: ''
           github_token: ${{ secrets.GITHUB_TOKEN }}
