@@ -5,17 +5,17 @@ resource "aws_iam_role" "github_actions_role" {
     Version = "2012-10-17"
     Statement = [
       {
-        "Effect" : "Allow",
-        "Principal" : {
-          "Federated" : "arn:aws:iam::${var.account_ids["aws-jordi-account"]}:oidc-provider/token.actions.githubusercontent.com"
+        "Effect": "Allow",
+        "Principal": {
+          "Federated": "arn:aws:iam::522922866161:oidc-provider/token.actions.githubusercontent.com"
         },
-        "Action" : "sts:AssumeRoleWithWebIdentity",
-        "Condition" : {
-          "StringEquals" : {
-            "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+          "StringEquals": {
+            "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
           },
-          "StringLike" : {
-            "token.actions.githubusercontent.com:sub" : "repo:JordiiBru/tfg-base-repo:*"
+          "StringLike": {
+            "token.actions.githubusercontent.com:sub": "repo:JordiiBru/tfg-base-repo:*"
           }
         }
       }
@@ -37,9 +37,9 @@ resource "aws_iam_policy" "admin_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        "Effect" : "Allow",
-        "Action" : "*",
-        "Resource" : "*"
+        "Effect": "Allow",
+        "Action": "*",
+        "Resource": "*"
       }
     ]
   })
