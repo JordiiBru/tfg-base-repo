@@ -71,10 +71,6 @@ jobs:
       - name: Terragrunt init
         id: init
         run: terragrunt init -input=false -reconfigure --terragrunt-working-dir ${{ matrix.dirs }}
-      
-      - name: Terragrunt plan
-        id: plan
-        run: terragrunt plan --terragrunt-working-dir ${{ matrix.dirs }} -out workspace.plan
 
       - name: Terraform apply
         id: apply
