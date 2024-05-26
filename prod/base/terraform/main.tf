@@ -7,7 +7,7 @@ resource "aws_s3_bucket" "tfg_states_bucket" {
 
   tags = {
     Terraform = var.terraform
-    Ownership = var.owner
+    Ownership = "estif"
     Stage     = var.stage
   }
 }
