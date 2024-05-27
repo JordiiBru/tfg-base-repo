@@ -1,5 +1,5 @@
 module "static_portfolio" {
-  source = "git::https://github.com/JordiiBru/tf-static-website.git?ref=v0.0.1"
+  source = "git@github.com:JordiiBru/tf-static-website.git?ref=v0.0.1"
 
   # Required variables
   stage   = var.stage
