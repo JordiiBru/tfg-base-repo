@@ -24,7 +24,7 @@ resource "aws_iam_role" "github_actions_role" {
 
   tags = {
     Terraform = var.terraform
-    Ownership = var.owner
+    Owner     = var.owner
     Stage     = var.stage
   }
 }
