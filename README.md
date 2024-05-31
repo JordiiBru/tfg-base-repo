@@ -3,7 +3,7 @@
 This repository serves as a possible solution to a scalable Terraform monorepo, providing all the essential components for managing and creating Infrastructure as Code (IaC), with a robust CI/CD pipeline using **Terragrunt**, **TFSec**, and **Infracost**.
 
 ## Structure
-The repository is organized into three environments: `dev`, `staging`, and `prod`. Following a GitOps philosophy, the code in the repository reflects the actual state of the infrastructure. Each environment has the following structure:
+The repository is organized into three environments: `dev`, `staging`, and `prod`. Each environment has the following structure:
 
 - `base`: Contains resources managed by the platform team. Only the platform team is allowed to merge requests (MR).
 - `apps`: Contains the Terraform modules for projects managed by developers. Developers must create folders per project, e.g., `dev/apps/portfolio`.
