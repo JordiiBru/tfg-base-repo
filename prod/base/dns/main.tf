@@ -14,7 +14,7 @@ locals {
 }
 
 resource "aws_route53_zone" "primary" {
-  name = local.custom_domain_name
+  name          = local.custom_domain_name
   force_destroy = false
 
   tags = {
