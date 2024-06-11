@@ -30,7 +30,9 @@ jobs:
           dir_names: 'true'
           matrix: 'true'
           files: |
-             **.tf*
+             **.tf
+             **.tfvars
+
       
       - name: List all changed folders
         run: echo '${{ steps.detect-folders.outputs.all_changed_files }}'
