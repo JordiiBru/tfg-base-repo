@@ -1,14 +1,14 @@
-# tfg-base-repo
+# Terraform - One for all
 
-This repository serves as a possible solution to a scalable Terraform monorepo, providing all the essential components for managing and creating Infrastructure as Code (IaC), with a robust CI/CD pipeline using **Terragrunt**, **TFSec**, and **Infracost**.
+This repository serves as a possible solution to a scalable Terraform monorepo, providing all the essential components for managing and creating Infrastructure as Code (IaC), with a robust CI/CD pipeline using **Terragrunt**, **TFLint**, **TFSec**, and **Infracost**.
 
-## Structure
+## Folder structure
 The repository is organized into three environments: `dev`, `staging`, and `prod`. Each environment has the following structure:
 
 - `base`: Contains resources managed by the platform team. Only the platform team is allowed to merge requests (MR).
 - `apps`: Contains the Terraform modules for projects managed by developers. Developers must create folders per project, e.g., `dev/apps/portfolio`.
 
-When creating a new service, developers must copy existing service files and modify them as needed. See this example: [prod/base/terraform](https://github.com/JordiiBru/tfg-base-repo/tree/main/prod/base/terraform).
+When creating a new service, developers must copy existing service files and modify them as needed. See this example: [dev/services/portfolio](https://github.com/JordiiBru/tfg-base-repo/tree/main/dev/apps/portfolio).
 
 ## Workflow
 
