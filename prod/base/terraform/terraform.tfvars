@@ -1,2 +1,1 @@
-terraform = true
-owner     = "jordi"
+owner = "jordi"

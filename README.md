@@ -12,7 +12,7 @@ When creating a new service, developers must copy existing service files and mod
 
 ## Workflow
 
-![Monorepo Diagram](images/monorepo-diagram.png)
+![Monorepo Diagram](files/images/monorepo-diagram.png)
 
 ## Terraform Modules Catalog
 
@@ -27,10 +27,10 @@ When creating a new service, developers must copy existing service files and mod
 ## Screenshots
 
 ### TFSec
-![TFSec Comment](images/tfsec-comment.png)
+![TFSec Comment](files/images/tfsec-comment.png)
 
 ### Plan
-![Plan Comment](images/plan-comment.png)
+![Plan Comment](files/images/plan-comment.png)
 
 ### Infracost
-![Infracost Comment](images/infracost-comment.png)
+![Infracost Comment](files/images/infracost-comment.png)

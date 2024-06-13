@@ -23,7 +23,7 @@ resource "aws_iam_role" "github_actions_role" {
   })
 
   tags = {
-    Terraform = var.terraform
+    Terraform = true
     Owner     = var.owner
     Stage     = var.stage
   }
