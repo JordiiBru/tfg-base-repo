@@ -18,7 +18,7 @@ resource "aws_route53_zone" "primary" {
   force_destroy = false
 
   tags = {
-    Terraform = var.terraform
+    Terraform = true
     Owner     = var.owner
     Stage     = var.stage
   }

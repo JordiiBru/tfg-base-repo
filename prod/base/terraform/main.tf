@@ -6,7 +6,7 @@ resource "aws_s3_bucket" "tfg_states_bucket" {
   }
 
   tags = {
-    Terraform = var.terraform
+    Terraform = true
     Owner     = var.owner
     Stage     = var.stage
   }
@@ -87,7 +87,7 @@ resource "aws_dynamodb_table" "tfg_tf_locks" {
   }
 
   tags = {
-    Terraform = var.terraform
+    Terraform = true
     Owner     = var.owner
     Stage     = var.stage
   }
