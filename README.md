@@ -1,4 +1,4 @@
-# Terraform - One for all
+# Terraform Monorepo - One for all
 
 This repository serves as a possible solution to a scalable Terraform monorepo, providing all the essential components for managing and creating Infrastructure as Code (IaC), with a robust CI/CD pipeline using **Terragrunt**, **TFLint**, **TFSec**, and **Infracost**.
 
