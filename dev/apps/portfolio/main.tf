@@ -1,7 +1,7 @@
-module "static" {
+module "static_portfolio" {
   source = "git@github.com:JordiiBru/tf-static-website.git?ref=v0.0.2"
 
-  # Required variables
+  # Common variables
   stage   = var.stage
   owner   = var.owner
   purpose = "portfolio"
