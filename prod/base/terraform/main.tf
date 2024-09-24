@@ -12,50 +12,34 @@ resource "aws_s3_bucket" "tfg_states_bucket" {
   }
 }
 
-resource "aws_s3_bucket_policy" "states_bucket_policy" {
+resource "aws_s3_bucket_policy" "tfg_states_bucket_policy" {
   bucket = aws_s3_bucket.tfg_states_bucket.id
-  policy = data.aws_iam_policy_document.states_bucket_policy.json
-}
 
-data "aws_iam_policy_document" "states_bucket_policy" {
-  statement {
-    effect = "Allow"
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${var.account_ids["aws-jordi-account"]}:root",
-        "arn:aws:iam::${var.account_ids["aws-jordi-account"]}:role/tfg-repo-base-cicd"
-      ]
-    }
-
-    actions = [
-      "s3:DeleteObject",
-      "s3:GetObject",
-      "s3:ListBucket",
-      "s3:PutObject"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Effect" : "Allow",
+        "Principal" : {
+          "AWS" : [
+            "arn:aws:iam::390844767079:root",
+            "arn:aws:iam::390844767079:user/jordi.bru",
+            "arn:aws:iam::390844767079:role/tfg-repo-base-cicd"
+          ]
+        },
+        "Action" : [
+          "s3:DeleteObject",
+          "s3:GetObject",
+          "s3:ListBucket",
+          "s3:PutObject"
+        ],
+        "Resource" : [
+          "${aws_s3_bucket.tfg_states_bucket.arn}",
+          "${aws_s3_bucket.tfg_states_bucket.arn}/*"
+        ]
+      }
     ]
-
-    resources = [
-      "${aws_s3_bucket.tfg_states_bucket.arn}",
-      "${aws_s3_bucket.tfg_states_bucket.arn}/*"
-    ]
-  }
-
-  statement {
-    effect = "Deny"
-    principals {
-      type        = "AWS"
-      identifiers = ["*"]
-    }
-
-    actions = [
-      "s3:DeleteBucket"
-    ]
-
-    resources = [
-      aws_s3_bucket.tfg_states_bucket.arn
-    ]
-  }
+  })
 }
 
 resource "aws_s3_bucket_public_access_block" "states_access_block" {
